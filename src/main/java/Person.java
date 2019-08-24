@@ -1,88 +1,81 @@
+import javafx.beans.property.*;
+
+import java.util.UUID;
+
 public class Person
 {
     // Properties of the person (name, address, job)
-    private Integer id;
-    private String firstName;
-    private String lastName;
-    private String street;
-    private String zipCode;
-    private String city;
-    private String country;
-    private String Job;
+    private IntegerProperty id = new SimpleIntegerProperty();
+    private StringProperty firstName = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
+    private StringProperty lastName = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
+    private StringProperty street = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,10));
+    private StringProperty zipCode = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,4));
+    private StringProperty city = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
+    private StringProperty country = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,6));
+    private StringProperty job = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,7));
 
-    public Person(Integer id, String firstName, String lastName, String street, String zipCode, String city, String country)
-    {
-        super();
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.street = street;
-        this.zipCode = zipCode;
-        this.city = city;
-        this.country = country;
-    }
 
     public Integer getId() {
-        return id;
+        return id.get();
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        this.id.setValue(id);
     }
 
     public String getFirstName() {
-        return firstName;
+        return firstName.get();
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.firstName.set(firstName);
     }
 
     public String getLastName() {
-        return lastName;
+        return lastName.get();
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName.set(lastName);
     }
 
     public String getStreet() {
-        return street;
+        return street.get();
     }
 
     public void setStreet(String street) {
-        this.street = street;
+        this.street.set(street);
     }
 
     public String getZipCode() {
-        return zipCode;
+        return zipCode.get();
     }
 
     public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+        this.zipCode.set(zipCode);
     }
 
     public String getCity() {
-        return city;
+        return city.get();
     }
 
     public void setCity(String city) {
-        this.city = city;
+        this.city.set(city);
     }
 
     public String getCountry() {
-        return country;
+        return country.get();
     }
 
     public void setCountry(String country) {
-        this.country = country;
+        this.country.set(country);
     }
 
     public String getJob() {
-        return Job;
+        return job.get();
     }
 
     public void setJob(String job) {
-        Job = job;
+        this.job.set(job);
     }
 }

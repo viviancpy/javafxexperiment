@@ -1,7 +1,6 @@
 # Default ignored files
 /workspace.xml
-
-target/
+[Tt]arget/
 *.class
 *.jar
 *.war

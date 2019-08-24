@@ -3,29 +3,20 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.UUID;
 import java.util.function.Predicate;
 
 public class TableViewHelper
 {
     private static ObservableList<Person> personMasterList = FXCollections.observableList(new LinkedList<>());
     static{
-        Person p1 = new Person(1,"Mark","Pearson","First Avenue 2","1200","Los Angeles","USA");
-        Person p2 = new Person(2,"Tom","Hoover","Kings Cross 3","2350","Denver","USA");
+        Person p1 = new Person(){{setId(1);}};
+        Person p2 = new Person(){{setId(2);}};
         personMasterList.addAll(p1,p2);
     }
 
     public static void addPerson(int id){
-//        Person p1 = new Person(1,"Mark","Pearson","First Avenue 2","1200","Los Angeles","USA");
-//        Person p2 = new Person(2,"Tom","Hoover","Kings Cross 3","2350","Denver","USA");
-//        Person p3 = new Person(3,"David","Mason","Bond Street 5","1100","Manchester","Great Britain");
-//        Person p4 = new Person(4,"Mary","Miller","Baker Street 86","1200","London","Great Britain");
-//        Person p5 = new Person(5,"Martha","Lancester","Main Street 375","9923","Sidney","Australia");
-//        Person p6 = new Person(6,"Henry","Forsyth","Main Street 3","37472","Toronto","Canada");
-        String randomString = UUID.randomUUID().toString();
-        Person randomPerson = new Person(id, randomString.substring(0,3), randomString.substring(3,6), randomString.substring(6,9), randomString.substring(9,12), "A", "B");
+        Person randomPerson = new Person(){{setId(id);}};
 
         personMasterList.add(randomPerson);
 
