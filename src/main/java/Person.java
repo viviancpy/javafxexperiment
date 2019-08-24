@@ -1,12 +1,13 @@
 import javafx.beans.property.*;
 
+import java.util.Observable;
 import java.util.UUID;
 
 public class Person
 {
     // Properties of the person (name, address, job)
     private IntegerProperty id = new SimpleIntegerProperty();
-    private StringProperty firstName = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
+    private StringProperty firstName = new SimpleStringProperty();
     private StringProperty lastName = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
     private StringProperty street = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,10));
     private StringProperty zipCode = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,4));
@@ -14,6 +15,9 @@ public class Person
     private StringProperty country = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,6));
     private StringProperty job = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,7));
 
+    public IntegerProperty idProperty() {
+        return id;
+    }
 
     public Integer getId() {
         return id.get();

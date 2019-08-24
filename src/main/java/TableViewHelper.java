@@ -1,25 +1,44 @@
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.function.Predicate;
 
 public class TableViewHelper
 {
-    private static ObservableList<Person> personMasterList = FXCollections.observableList(new LinkedList<>());
+    // Backed by LinkedList - not work
+    // private static ObservableList<Person> personMasterList = FXCollections.<Person>observableList(new LinkedList<>(), extractor());
+
+    // Backed by Array List - work
+    // private static ObservableList<Person> personMasterList = FXCollections.<Person>observableList(new ArrayList<>(), extractor());
+
+    private static ObservableList<Person> personMasterList = FXCollectionsWrapper.<Person>observableList(new LinkedList<>(), extractor());
+
+    private static ObservableList<Person> filteredPersonList = getPersonList().filtered(new Predicate<Person>() {
+        @Override
+        public boolean test(Person person) {
+            return person.getId() % 2 == 0;
+        }
+    });
+
+    public static Callback<Person, Observable[]> extractor() {
+        return (Person p) -> new Observable[]{p.idProperty()};
+    }
+
     static{
-        Person p1 = new Person(){{setId(1);}};
-        Person p2 = new Person(){{setId(2);}};
+        Person p1 = new Person(){{setId(1); setFirstName(Character.toString((char)(1+64)));}};
+        Person p2 = new Person(){{setId(2); setFirstName(Character.toString((char)(2+64)));}};
         personMasterList.addAll(p1,p2);
     }
 
     public static void addPerson(int id){
-        Person randomPerson = new Person(){{setId(id);}};
-
+        Person randomPerson = new Person(){{setId(id); setFirstName(Character.toString((char)(id+64)));}};
         personMasterList.add(randomPerson);
-
     }
 
     public static void changeList(){
@@ -34,12 +53,7 @@ public class TableViewHelper
     }
 
     public static ObservableList<Person> getFilteredPersonList(){
-        return getPersonList().filtered(new Predicate<Person>() {
-            @Override
-            public boolean test(Person person) {
-                return person.getId() % 2 == 0;
-            }
-        });
+        return filteredPersonList;
     }
 
     // Returns Person Id TableColumn

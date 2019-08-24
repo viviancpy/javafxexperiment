@@ -49,6 +49,9 @@ public class MainApplication extends Application {
                 TableViewHelper.addPerson(personId.incrementAndGet());
 //                filteredTableView.refresh();
 //                unfilteredTableView.refresh();
+
+                System.out.println("Filtered List: ");
+                TableViewHelper.getFilteredPersonList().forEach(p -> System.out.println("Person " + p.getId() + " " + p.getFirstName()));
             });
             System.out.println("added person. List length =" + TableViewHelper.getPersonList().size());
 
@@ -57,9 +60,7 @@ public class MainApplication extends Application {
         Button flipPredicate = new Button("Add id by 1");
         flipPredicate.onActionProperty().setValue(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                Platform.runLater(()-> {
-                    TableViewHelper.changeList();
-                });
+                TableViewHelper.changeList();
             }
         });
 
