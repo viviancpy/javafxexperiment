@@ -1,3 +1,5 @@
+package utils;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -47,9 +49,9 @@ public final class ObservableFilterableSequentialListWrapper<E> extends Modifiab
                 };
             }
         }, this);
-        for (E e : backingList) {
-            elementObserver.attachListener(e);
-        }
+//        for (E e : backingList) {
+//            elementObserver.attachListener(e);
+//        }
     }
 
     @Override

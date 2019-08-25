@@ -2,28 +2,28 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static javafx.application.Application.launch;
 
 public class MainApplication extends Application {
+
+    private static int INITIAL_NUMBER_OF_RECORDS = 20000;
+    private static int INITIAL_BATCH_INSERT_NUMBER = 100;
+    private static long SCHEDULE_DELAY = 10000;
+    private static long SCHEDULE_TIME_PERIOD = 200;
+    private static TimeUnit SCHEDULE_TIME_UNIT = TimeUnit.MILLISECONDS;
 
     public static void main(String[] args)
     {
@@ -34,28 +34,45 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage)
     {
-        AtomicInteger personId = new AtomicInteger(2);
+        AtomicBoolean initialLoadFinished = new AtomicBoolean(false);
 
         TableView filteredTableView = getFilteredTableView();
         TableView unfilteredTableView = getUnfilteredTableView();
 
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, runnable -> {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread t = new Thread(runnable);
             t.setDaemon(true);
             return t;
         });
+
+        scheduler.execute(() -> {
+//            The UI thread got busy if the loop is inside Platform.runLater
+//            Platform.runLater(()->{
+//                // This is slow and block UI if INITIAL_NUMBER_OF_RECORDS is large (e.g. >100)
+////                for (int i = 0; i < INITIAL_NUMBER_OF_RECORDS; i++) {
+////                    TableViewHelper.addPerson();
+////                }
+//
+//                TableViewHelper.addPeople(INITIAL_NUMBER_OF_RECORDS);
+//
+//                initialLoadFinished.set(true);
+//            });
+
+            // move UI thread to run the add to observable, use worker thraed to create fake person/people
+            for (int batch = 0; batch < Math.floorDiv(INITIAL_NUMBER_OF_RECORDS, INITIAL_BATCH_INSERT_NUMBER); batch ++){
+                TableViewHelper.addPeople(INITIAL_BATCH_INSERT_NUMBER);
+            }
+
+            TableViewHelper.addPeople(INITIAL_NUMBER_OF_RECORDS - Math.floorDiv(INITIAL_NUMBER_OF_RECORDS, INITIAL_BATCH_INSERT_NUMBER) * INITIAL_BATCH_INSERT_NUMBER);
+
+            initialLoadFinished.set(true);
+        });
+
         scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(()->{
-                TableViewHelper.addPerson(personId.incrementAndGet());
-//                filteredTableView.refresh();
-//                unfilteredTableView.refresh();
-
-                System.out.println("Filtered List: ");
-                TableViewHelper.getFilteredPersonList().forEach(p -> System.out.println("Person " + p.getId() + " " + p.getFirstName()));
-            });
-            System.out.println("added person. List length =" + TableViewHelper.getPersonList().size());
-
-        },0, 5000, TimeUnit.MILLISECONDS);
+            if (initialLoadFinished.get()){
+                TableViewHelper.addPerson();
+            }
+        }, SCHEDULE_DELAY, SCHEDULE_TIME_PERIOD, SCHEDULE_TIME_UNIT);
 
         Button flipPredicate = new Button("Add id by 1");
         flipPredicate.onActionProperty().setValue(new EventHandler<ActionEvent>() {

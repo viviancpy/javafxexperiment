@@ -1,19 +1,36 @@
+import com.github.javafaker.Faker;
 import javafx.beans.property.*;
-
-import java.util.Observable;
-import java.util.UUID;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class Person
 {
+
     // Properties of the person (name, address, job)
-    private IntegerProperty id = new SimpleIntegerProperty();
-    private StringProperty firstName = new SimpleStringProperty();
-    private StringProperty lastName = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
-    private StringProperty street = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,10));
-    private StringProperty zipCode = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,4));
-    private StringProperty city = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,5));
-    private StringProperty country = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,6));
-    private StringProperty job = new SimpleStringProperty(UUID.randomUUID().toString().substring(0,7));
+    private IntegerProperty id;
+    private StringProperty firstName;
+    private StringProperty lastName;
+    private StringProperty street;
+    private StringProperty zipCode;
+    private StringProperty city;
+    private StringProperty country;
+    private StringProperty job;
+
+    public Person(int id){
+//        StopWatch watch = new StopWatch();
+//        watch.start();
+        Faker faker = new Faker();
+
+        this.id = new SimpleIntegerProperty(id);
+        this.firstName = new SimpleStringProperty(faker.name().firstName());
+        this.lastName = new SimpleStringProperty(faker.name().lastName());
+        this.street = new SimpleStringProperty(faker.address().streetAddress());
+        this.zipCode = new SimpleStringProperty(faker.address().zipCode());
+        this.city = new SimpleStringProperty(faker.address().cityName());
+        this.country = new SimpleStringProperty(faker.address().country());
+        this.job = new SimpleStringProperty(faker.company().name());
+//        watch.stop();
+//        System.out.println(watch.getTime());
+    }
 
     public IntegerProperty idProperty() {
         return id;
@@ -23,7 +40,7 @@ public class Person
         return id.get();
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id.setValue(id);
     }
 

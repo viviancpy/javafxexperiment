@@ -1,16 +1,22 @@
+import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.collections.FXCollections;
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
+import utils.FXCollectionsWrapper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class TableViewHelper
 {
+
     // Backed by LinkedList - not work
     // private static ObservableList<Person> personMasterList = FXCollections.<Person>observableList(new LinkedList<>(), extractor());
 
@@ -19,10 +25,16 @@ public class TableViewHelper
 
     private static ObservableList<Person> personMasterList = FXCollectionsWrapper.<Person>observableList(new LinkedList<>(), extractor());
 
-    private static ObservableList<Person> filteredPersonList = getPersonList().filtered(new Predicate<Person>() {
+    private static ObservableList<Person> filteredPersonList = getPersonList()
+    .filtered(new Predicate<Person>() {
         @Override
         public boolean test(Person person) {
             return person.getId() % 2 == 0;
+        }
+    }).sorted(new Comparator<Person>() {
+        @Override
+        public int compare(Person o1, Person o2) {
+            return Integer.compare(o1.getId(), o2.getId());
         }
     });
 
@@ -30,15 +42,18 @@ public class TableViewHelper
         return (Person p) -> new Observable[]{p.idProperty()};
     }
 
-    static{
-        Person p1 = new Person(){{setId(1); setFirstName(Character.toString((char)(1+64)));}};
-        Person p2 = new Person(){{setId(2); setFirstName(Character.toString((char)(2+64)));}};
-        personMasterList.addAll(p1,p2);
+    public static void addPerson(){
+        Person randomPerson = new Person(personMasterList.size());
+        Platform.runLater(()->personMasterList.add(randomPerson));
+
     }
 
-    public static void addPerson(int id){
-        Person randomPerson = new Person(){{setId(id); setFirstName(Character.toString((char)(id+64)));}};
-        personMasterList.add(randomPerson);
+    public static void addPeople(int numberOfPeople){
+        List<Person> randomPeople = new ArrayList<>(numberOfPeople);
+        for (int i = personMasterList.size(); i < personMasterList.size() + numberOfPeople; i++) {
+            randomPeople.add(new Person(i));
+        }
+        Platform.runLater(()->personMasterList.addAll(randomPeople));
     }
 
     public static void changeList(){
@@ -48,7 +63,6 @@ public class TableViewHelper
     // Returns an observable list of persons
     public static ObservableList<Person> getPersonList()
     {
-//        return FXCollections.<Person>observableArrayList(p1, p2, p3, p4, p5, p6);
         return personMasterList;
     }
 
@@ -62,6 +76,7 @@ public class TableViewHelper
         TableColumn<Person, Integer> idCol = new TableColumn<>("Id");
         PropertyValueFactory<Person, Integer> idCellValueFactory = new PropertyValueFactory<>("id");
         idCol.setCellValueFactory(idCellValueFactory);
+        idCol.setSortType(TableColumn.SortType.DESCENDING);
         return idCol;
     }
 

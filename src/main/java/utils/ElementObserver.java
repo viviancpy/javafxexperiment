@@ -1,7 +1,8 @@
+package utils;
+
 import javafx.collections.ObservableListBase;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.RandomAccess;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.util.Callback;
